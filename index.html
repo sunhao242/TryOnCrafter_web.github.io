@@ -3,39 +3,805 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TryOnCrafter: Camera-controllable video virtual try-on via a renderable 4D try-on proxy.">
   <title>TryOnCrafter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #080909;
+      --panel: #101312;
+      --panel-2: #151916;
+      --text: #f4f1e8;
+      --muted: #b7b0a1;
+      --soft: #746f64;
+      --line: rgba(244, 241, 232, 0.14);
+      --gold: #d6b35a;
+      --green: #9eb384;
+      --blue: #8aa6c9;
+      --rose: #d0a2a0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(214, 179, 90, 0.12), transparent 32rem),
+        radial-gradient(circle at 88% 22%, rgba(138, 166, 201, 0.10), transparent 30rem),
+        linear-gradient(180deg, #080909 0%, #0d100f 48%, #080909 100%);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 9, 9, 0.84);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-inner {
+      width: min(1180px, calc(100% - 40px));
+      height: 66px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 25px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .hero {
+      min-height: calc(100vh - 66px);
+      display: grid;
+      align-items: center;
+      padding: 78px 0 38px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(340px, 0.85fr);
+      gap: 42px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(58px, 11vw, 128px);
+      line-height: 0.84;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 24px 0 0;
+      color: #d8d1c3;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-style: italic;
+      line-height: 1.03;
+    }
+
+    .authors {
+      margin: 26px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    .authors strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .affiliations {
+      margin-top: 10px;
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(244, 241, 232, 0.05);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(214, 179, 90, 0.55);
+      background: rgba(214, 179, 90, 0.12);
+    }
+
+    .visual-frame {
+      position: relative;
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, rgba(244, 241, 232, 0.10), rgba(244, 241, 232, 0.03));
+      padding: 10px;
+      box-shadow: 0 34px 110px rgba(0, 0, 0, 0.42);
+    }
+
+    .hero-visual {
+      min-height: 520px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(214, 179, 90, 0.16), transparent 40%),
+        linear-gradient(315deg, rgba(138, 166, 201, 0.15), transparent 42%),
+        #111411;
+    }
+
+    .placeholder {
       display: grid;
       place-items: center;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #1f2937;
-      background: #f7f7f4;
-    }
-    main {
-      max-width: 760px;
-      padding: 48px 24px;
+      min-height: 260px;
+      border: 1px dashed rgba(244, 241, 232, 0.24);
+      color: rgba(244, 241, 232, 0.52);
       text-align: center;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
     }
-    h1 {
-      margin: 0 0 16px;
-      font-size: clamp(40px, 8vw, 84px);
+
+    .placeholder span {
+      max-width: 260px;
+    }
+
+    .film-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 8px 0 0;
+    }
+
+    .film-strip div {
+      aspect-ratio: 4 / 3;
+      border: 1px dashed rgba(244, 241, 232, 0.2);
+      background:
+        linear-gradient(145deg, rgba(158, 179, 132, 0.12), transparent),
+        rgba(255, 255, 255, 0.03);
+    }
+
+    .hero-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    section {
+      padding: 88px 0;
+      border-top: 1px solid rgba(244, 241, 232, 0.08);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.55fr 1fr;
+      gap: 36px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      color: var(--text);
+      font-size: clamp(38px, 5vw, 68px);
+      line-height: 0.95;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .abstract-box {
+      border: 1px solid var(--line);
+      background: rgba(244, 241, 232, 0.045);
+      padding: clamp(24px, 5vw, 48px);
+    }
+
+    .abstract-box p {
+      margin: 0;
+      color: #d2cabd;
+      font-size: 17px;
+      line-height: 1.9;
+      text-align: justify;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: rgba(244, 241, 232, 0.045);
+      padding: 20px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--gold);
+      font-size: 26px;
       line-height: 1;
     }
-    p {
+
+    .stat span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(244, 241, 232, 0.07), rgba(244, 241, 232, 0.035));
+      padding: 26px;
+    }
+
+    .card-number {
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .card h3 {
+      margin-top: 42px;
+      color: var(--text);
+      font-size: 30px;
+      line-height: 1;
+      font-style: italic;
+    }
+
+    .card p {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .pipeline-figure {
+      min-height: 510px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(214, 179, 90, 0.11), transparent),
+        rgba(244, 241, 232, 0.04);
+      padding: 12px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: rgba(244, 241, 232, 0.045);
+      padding: 20px;
+    }
+
+    .step h3 {
+      color: var(--text);
+      font-family: Inter, sans-serif;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .step p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(244, 241, 232, 0.04);
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 13px 12px;
+      border-bottom: 1px solid rgba(244, 241, 232, 0.09);
+      color: var(--muted);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--text);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    td.best,
+    tr.highlight td {
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    .result-note {
+      border: 1px solid var(--line);
+      background: rgba(244, 241, 232, 0.045);
+      padding: 24px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .applications {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .application {
+      min-height: 300px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      border: 1px solid var(--line);
+      background: rgba(244, 241, 232, 0.04);
+      padding: 10px;
+    }
+
+    .application h3 {
+      margin: 18px 8px 8px;
+      font-size: 28px;
+      font-style: italic;
+    }
+
+    .application p {
+      margin: 0 8px 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    pre {
       margin: 0;
-      font-size: 20px;
-      line-height: 1.6;
-      color: #4b5563;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      background: #050606;
+      color: #cfc7ba;
+      padding: 22px;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    footer {
+      padding: 54px 0;
+      border-top: 1px solid var(--line);
+      color: var(--soft);
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 920px) {
+      .nav-inner {
+        height: auto;
+        padding: 16px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        gap: 16px;
+        padding-bottom: 2px;
+      }
+
+      .hero-grid,
+      .section-head,
+      .pipeline,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 48px;
+      }
+
+      .hero-visual {
+        min-height: 420px;
+      }
+
+      .stats,
+      .cards,
+      .applications {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap,
+      .nav-inner {
+        width: min(100% - 28px, 1180px);
+      }
+
+      section {
+        padding: 64px 0;
+      }
+
+      .film-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>TryOnCrafter</h1>
-    <p>Project homepage placeholder. The full paper page can now be deployed here.</p>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top">TryOnCrafter</a>
+      <div class="nav-links" aria-label="Page sections">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#applications">Applications</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Camera-controllable Video Virtual Try-on</p>
+          <h1>TryOnCrafter</h1>
+          <p class="subtitle">Unleashing Camera Trajectories for Realistic Video Virtual Try-on via a Renderable 4D Try-on Proxy</p>
+          <div class="authors">
+            <strong>Hao Sun</strong><sup>1,2,4</sup>,
+            <strong>Hao Yan</strong><sup>4</sup>,
+            <strong>Mengting Chen</strong><sup>4</sup>,
+            <strong>Quanjian Song</strong><sup>3,4</sup>,
+            <strong>Yu Li</strong><sup>1</sup>,
+            <strong>Juan Cao</strong><sup>1</sup>,
+            <strong>Jinsong Lan</strong><sup>4</sup>,
+            <strong>Xiaoyong Zhu</strong><sup>4</sup>,
+            <strong>Bo Zheng</strong><sup>4</sup>,
+            <strong>Sheng Tang</strong><sup>1</sup>
+          </div>
+          <div class="affiliations">
+            1 ICT, CAS &nbsp; 2 UCAS &nbsp; 3 Xiamen University &nbsp; 4 Alibaba Group
+          </div>
+          <div class="actions">
+            <a class="button" href="https://arxiv.org/abs/2606.26092" target="_blank" rel="noopener">Paper</a>
+            <a class="button" href="https://arxiv.org/pdf/2606.26092" target="_blank" rel="noopener">PDF</a>
+            <span class="button" aria-disabled="true">Code Coming Soon</span>
+            <span class="button" aria-disabled="true">Data Coming Soon</span>
+          </div>
+        </div>
+        <div class="visual-frame">
+          <div class="hero-visual">
+            <div class="placeholder">
+              <span>Hero teaser / generated video placeholder</span>
+            </div>
+            <div>
+              <div class="film-strip" aria-hidden="true">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <div class="hero-caption">
+                <span>Source video + garment</span>
+                <span>Novel trajectory synthesis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="abstract">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Abstract</h2>
+          <p class="lead">TryOnCrafter introduces Camera-controllable Video Virtual Try-on (CaM-VVT), moving video try-on beyond the fixed camera path of the input monocular video.</p>
+        </div>
+        <div class="abstract-box">
+          <p>
+            Existing video virtual try-on methods can synthesize realistic garment overlays on dynamic subjects, but they remain tied to the source camera trajectory. TryOnCrafter addresses this limitation with a unified DiT-based framework for camera-controllable video virtual try-on. The method constructs a renderable 4D try-on proxy by distilling high-fidelity 2D try-on priors into a clothed 3D Gaussian avatar, animating it with SMPL-X motion, and aligning it with a reconstructed background point cloud. A proxy-anchored video diffusion transformer then uses rendered priors, cross-view reference features, and multimodal semantic conditions to synthesize photorealistic try-on videos under arbitrary camera trajectories while preserving garment identity, subject motion, and scene coherence.
+          </p>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>CaM-VVT</strong><span>New Task Frontier</span></div>
+          <div class="stat"><strong>4D Proxy</strong><span>Geometry Anchor</span></div>
+          <div class="stat"><strong>60K</strong><span>Training Clips</span></div>
+          <div class="stat"><strong>75.47</strong><span>CaM-VVTBench Score</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="method">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Method</h2>
+          <p class="lead">The framework combines explicit 4D geometric reconstruction with diffusion-based video synthesis, using the renderable proxy as a dense structural anchor.</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="card-number">Stage 01</div>
+            <div>
+              <h3>4D Try-on Proxy</h3>
+              <p>Reconstructs the scene, separates human and background, aligns SMPL-X motion into world space, and builds a clothed 3DGS avatar from a target-garment reference.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-number">Stage 02</div>
+            <div>
+              <h3>Proxy-Anchored DiT</h3>
+              <p>Uses rendered proxy video and masks as pixel-aligned priors, constraining the generation to the prescribed camera trajectory and physically plausible motion.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-number">Stage 03</div>
+            <div>
+              <h3>Cross-view Fidelity</h3>
+              <p>A Cross-view Reference Adapter and CLIP/UmT5 semantic tokens recover source identity, garment material cues, and global scene consistency in unseen views.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline">
+      <div class="wrap pipeline">
+        <div class="pipeline-figure">
+          <div class="placeholder" style="height:100%;">
+            <span>Overall pipeline / architecture figure placeholder</span>
+          </div>
+        </div>
+        <div class="steps">
+          <article class="step">
+            <h3>Anchor-based Alignment</h3>
+            <p>A confidence-aware point-to-surface objective maps SMPL-X vertices from camera space to the reconstructed world space, reducing scale and coordinate ambiguity.</p>
+          </article>
+          <article class="step">
+            <h3>Deformation & Rendering</h3>
+            <p>The canonical clothed 3DGS avatar is driven by SMPL-X through linear blend skinning, then rendered together with the background under input or novel trajectories.</p>
+          </article>
+          <article class="step">
+            <h3>Rendered Prior Injection</h3>
+            <p>The rendered video is encoded and concatenated with latent noise, giving the DiT dense guidance for global geometry, body pose, and garment deformation.</p>
+          </article>
+          <article class="step">
+            <h3>Cross-view Reference Adapter</h3>
+            <p>CRA shares key-value projections with the DiT backbone while using independent query/output weights, injecting reference residuals without destabilizing the prior.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Results</h2>
+          <p class="lead">Experiments cover standard video virtual try-on and the new CaM-VVTBench for camera-controllable try-on with tilt, zoom, and orbit trajectories.</p>
+        </div>
+        <div class="results-grid">
+          <table aria-label="Quantitative results on ViViD">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>VFIDp-I ↓</th>
+                <th>VFIDp-R ↓</th>
+                <th>VFIDu-I ↓</th>
+                <th>VFIDu-R ↓</th>
+                <th>LPIPS ↓</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>CatV2TON</td><td>13.5962</td><td>0.2963</td><td>19.5131</td><td>0.5283</td><td>0.0639</td></tr>
+              <tr><td>Magic-Tryon</td><td>12.1988</td><td>0.2346</td><td>17.5710</td><td>0.5073</td><td>0.0815</td></tr>
+              <tr><td>DreamVVT</td><td>11.0180</td><td>0.2549</td><td>16.9468</td><td>0.4285</td><td>0.0619</td></tr>
+              <tr class="highlight"><td>TryOnCrafter</td><td>9.6085</td><td>0.1817</td><td>10.7563</td><td>0.2088</td><td>0.0567</td></tr>
+            </tbody>
+          </table>
+          <div class="result-note">
+            <p>
+              On ViViD, TryOnCrafter improves video-level fidelity and perceptual quality across paired and unpaired protocols. On CaM-VVTBench, it achieves the best overall score among two-stage camera-control baselines, with stronger subject consistency, imaging quality, and overall consistency under complex camera maneuvers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="applications">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Applications</h2>
+          <p class="lead">Because the 4D proxy disentangles the human subject, garment, motion, and background, it naturally supports interactive camera and scene edits.</p>
+        </div>
+        <div class="applications">
+          <article class="application">
+            <div class="placeholder"><span>Human relocalization placeholder</span></div>
+            <div>
+              <h3>Human Relocalization</h3>
+              <p>Translate the motion sequence in world space while keeping background geometry consistent.</p>
+            </div>
+          </article>
+          <article class="application">
+            <div class="placeholder"><span>360-degree orbital viewing placeholder</span></div>
+            <div>
+              <h3>360° Orbital Viewing</h3>
+              <p>Render full orbital camera paths to inspect garment appearance from unseen viewpoints.</p>
+            </div>
+          </article>
+          <article class="application">
+            <div class="placeholder"><span>Bullet-time try-on placeholder</span></div>
+            <div>
+              <h3>Bullet Time</h3>
+              <p>Freeze a temporal instant and synthesize smooth camera motion around a single pose.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="citation">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Citation</h2>
+          <p class="lead">Please cite the paper if you find this project useful.</p>
+        </div>
+        <pre><code>@article{sun2026tryoncrafter,
+  title={TryOnCrafter: Unleashing Camera Trajectories for Realistic Video Virtual Try-on via a Renderable 4D Try-on Proxy},
+  author={Sun, Hao and Yan, Hao and Chen, Mengting and Song, Quanjian and Li, Yu and Cao, Juan and Lan, Jinsong and Zhu, Xiaoyong and Zheng, Bo and Tang, Sheng},
+  journal={arXiv preprint arXiv:2606.26092},
+  year={2026}
+}</code></pre>
+      </div>
+    </section>
   </main>
+
+  <footer>
+    <div class="wrap">
+      Homepage structure inspired by academic project pages including FashionChameleon and iTryOn.
+    </div>
+  </footer>
 </body>
 </html>
