@@ -50,14 +50,6 @@
       margin: 0 auto;
     }
 
-    .method-container {
-      width: min(1320px, calc(100% - 36px));
-    }
-
-    .wide-container {
-      width: min(1180px, calc(100% - 36px));
-    }
-
     .hero {
       padding: 58px 0 28px;
       text-align: center;
@@ -98,6 +90,12 @@
 
     .affiliations {
       margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .author-notes {
+      margin-top: 6px;
       color: var(--muted);
       font-size: 14px;
     }
@@ -202,6 +200,7 @@
     }
 
     .teaser-frame {
+      padding: 10px;
       border: 0;
       border-radius: 12px;
       box-shadow: 0 18px 46px rgba(35, 45, 65, 0.16);
@@ -224,7 +223,12 @@
     .abstract {
       max-width: 900px;
       margin: 0 auto;
+      padding: 24px 28px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
       color: #3c4043;
+      box-shadow: 0 12px 30px rgba(60, 64, 67, 0.06);
       font-size: 17px;
       line-height: 1.85;
       text-align: justify;
@@ -253,9 +257,13 @@
     .video-slide video {
       display: block;
       width: 100%;
-      aspect-ratio: 2890 / 976;
+      aspect-ratio: 2970 / 1126;
       background: #f5f6f8;
-      object-fit: cover;
+      object-fit: contain;
+    }
+
+    .comparison-carousel .video-slide video {
+      aspect-ratio: 4424 / 1134;
     }
 
     .carousel-button {
@@ -345,17 +353,84 @@
 
     .method-text {
       display: grid;
-      gap: 14px;
+      gap: 9px;
     }
 
     .method-text .card {
       min-height: 0;
+      padding: 17px;
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(60, 64, 67, 0.05);
+    }
+
+    .method-text h3 {
+      margin-bottom: 6px;
+      font-size: 15.5px;
+      line-height: 1.18;
+    }
+
+    .method-text .card p {
+      font-size: 12.5px;
+      line-height: 1.36;
     }
 
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+    }
+
+    .application-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .application-tab {
+      min-height: 38px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #3c4043;
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+
+    .application-tab:hover,
+    .application-tab.active {
+      border-color: #303134;
+      background: #303134;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .application-panel {
+      display: none;
+    }
+
+    .application-panel.active {
+      display: block;
+    }
+
+    .application-video-frame {
+      overflow: hidden;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 18px 46px rgba(35, 45, 65, 0.16);
+    }
+
+    .application-video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 2.35 / 1;
+      background: #f5f6f8;
+      object-fit: contain;
     }
 
     .result-panel {
@@ -423,17 +498,20 @@
       <div class="authors">
         <span>Hao Sun<sup>1,2,4</sup></span>
         <span>Hao Yan<sup>4</sup></span>
-        <span>Mengting Chen<sup>4</sup></span>
+        <span>Mengting Chen<sup>4,†</sup></span>
         <span>Quanjian Song<sup>3,4</sup></span>
         <span>Yu Li<sup>1</sup></span>
         <span>Juan Cao<sup>1</sup></span>
         <span>Jinsong Lan<sup>4</sup></span>
         <span>Xiaoyong Zhu<sup>4</sup></span>
         <span>Bo Zheng<sup>4</sup></span>
-        <span>Sheng Tang<sup>1</sup></span>
+        <span>Sheng Tang<sup>1,*</sup></span>
       </div>
       <div class="affiliations">
         <sup>1</sup>ICT, CAS &nbsp;&nbsp; <sup>2</sup>UCAS &nbsp;&nbsp; <sup>3</sup>Xiamen University &nbsp;&nbsp; <sup>4</sup>Alibaba Group
+      </div>
+      <div class="author-notes">
+        <sup>†</sup>Project leader &nbsp;&nbsp; <sup>*</sup>Corresponding author
       </div>
       <div class="links">
         <a class="button" href="https://arxiv.org/abs/2605.21431" target="_blank" rel="noopener">📄 Paper PDF</a>
@@ -454,38 +532,45 @@
       <div class="container">
         <h2>Abstract</h2>
         <p class="abstract">
-          Video virtual try-on has made strong progress in synthesizing realistic garment overlays on dynamic subjects, yet existing methods remain constrained by the camera trajectory of the input monocular video. TryOnCrafter introduces Camera-controllable Video Virtual Try-on (CaM-VVT), a new setting that enables virtual fitting under arbitrary camera movements. The method builds a Renderable 4D Try-on Proxy by distilling 2D try-on priors into a clothed 3D Gaussian avatar, animating it with SMPL-X motion, and aligning it with a reconstructed background point cloud. A Proxy-Anchored Video DiT then uses the rendered proxy sequence, cross-view reference features, and multimodal semantic conditions to synthesize photorealistic try-on videos with consistent garment identity, plausible deformation, and coherent scene structure.
+          While Video Virtual Try-on (VVT) has achieved remarkable progress in synthesizing realistic garment overlays on dynamic subjects, existing paradigms remains fundamentally constrained by a passive dependency on source camera trajectories, failing to accommodate the requisite interactive freedom for omnidirectional viewpoint exploration. 
+To address this limitation, we define a pioneering research frontier: Camera-controllable Video Virtual Try-on (CaM-VVT). Unlike conventional VVT, CaM-VVT not only necessitates viewpoint-agnostic texture hallucination but also strict structural synchronization between non-rigid human dynamics and background contexts under arbitrary, unconstrained camera movements.
+To tackle these challenges, we present TryOnCrafter, the first unified DiT-based framework specifically architected for the CaM-VVT task. Departing from implicit pixel-space manipulation, we introduce a Renderable 4D Try-on Proxy that explicitly decouples the human subject from the environment. This is achieved by distilling high-fidelity 2D try-on priors into a clothed 3DGS-based avatar, which is subsequently animated via SMPL-X sequences and metric-aligned into a reconstructed background point cloud. This proxy establishes a robust structural foundation with superior texture density and motion integrity. Our Proxy-Anchored Video DiT leverages this robust structural foundation as a primary geometric anchor, ensuring that the synthesized photorealistic videos are strictly constrained by prescribed trajectories and physically plausible deformations. 
+Benefiting from the inherent editability of the 4D proxy, TryOnCrafter facilitates diverse downstream applications, including human relocalization, ''bullet time'' effects, and 360-degree orbital viewing. 
+Extensive experiments on our established CaM-VVTBench demonstrate that TryOnCrafter significantly outperforms existing baselines in preserving structural consistency and garment identity across complex camera maneuvers.
         </p>
       </div>
     </section>
 
     <section class="section compact">
-      <div class="container wide-container">
+      <div class="container">
         <h2>Camera-controllable Virtual Try-On Results</h2>
         <div class="video-carousel" data-carousel>
           <button class="carousel-button prev" type="button" aria-label="Previous video" data-carousel-prev>&lsaquo;</button>
           <div class="video-stage">
-          <div class="video-slide active">
-            <video src="展示视频/展示视频2/sample-0%20-%202026-05-10T220525.793.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
-          <div class="video-slide">
-            <video src="展示视频/展示视频2/sample-1%20(58).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
-          <div class="video-slide">
-            <video src="展示视频/展示视频2/sample-0%20-%202026-03-04T135442.321.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
-          <div class="video-slide">
-            <video src="展示视频/展示视频2/sample-10%20(9).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
-          <div class="video-slide">
-            <video src="展示视频/展示视频2/sample-1%20(42).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
-          <div class="video-slide">
-            <video src="展示视频/展示视频2/sample-9%20(8).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
-          <div class="video-slide">
-            <video src="展示视频/展示视频2/%E8%A7%86%E9%A2%9115.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
-          </div>
+            <div class="video-slide active">
+              <video src="assets/videos/results/camvvt-result-01.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <!-- <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-02.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div> -->
+            <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-03.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-04.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-05.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-06.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-07.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/results/camvvt-result-08.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
           </div>
           <button class="carousel-button next" type="button" aria-label="Next video" data-carousel-next>&rsaquo;</button>
           <div class="carousel-dots" aria-label="Video selector">
@@ -496,6 +581,7 @@
             <button class="carousel-dot" type="button" aria-label="Show video 5" data-carousel-dot="4"></button>
             <button class="carousel-dot" type="button" aria-label="Show video 6" data-carousel-dot="5"></button>
             <button class="carousel-dot" type="button" aria-label="Show video 7" data-carousel-dot="6"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 8" data-carousel-dot="7"></button>
           </div>
         </div>
       </div>
@@ -522,7 +608,7 @@
     </section>
 
     <section class="section">
-      <div class="container method-container">
+      <div class="container">
         <h2>Method Overview</h2>
         <div class="method-grid">
           <div class="media-frame method-figure">
@@ -546,14 +632,32 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section compact">
       <div class="container">
-        <h2>Results</h2>
-        <div class="result-panel">
-          <div class="placeholder">
-            <span>Experimental results placeholder</span>
+        <h2>Comparison on CaM-VVT Dataset</h2>
+        <div class="video-carousel comparison-carousel" data-carousel>
+          <button class="carousel-button prev" type="button" aria-label="Previous comparison video" data-carousel-prev>&lsaquo;</button>
+          <div class="video-stage">
+            <div class="video-slide active">
+              <video src="assets/videos/comparison/camvvt-comparison-01-tryoncrafter.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/comparison/camvvt-comparison-01-magic-tryon.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/comparison/camvvt-comparison-02-tryoncrafter.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
+            <div class="video-slide">
+              <video src="assets/videos/comparison/camvvt-comparison-02-magic-tryon.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
           </div>
-          <p class="caption">Quantitative tables and qualitative comparisons will be inserted here.</p>
+          <button class="carousel-button next" type="button" aria-label="Next comparison video" data-carousel-next>&rsaquo;</button>
+          <div class="carousel-dots" aria-label="Comparison video selector">
+            <button class="carousel-dot active" type="button" aria-label="Show comparison video 1" data-carousel-dot="0"></button>
+            <button class="carousel-dot" type="button" aria-label="Show comparison video 2" data-carousel-dot="1"></button>
+            <button class="carousel-dot" type="button" aria-label="Show comparison video 3" data-carousel-dot="2"></button>
+            <button class="carousel-dot" type="button" aria-label="Show comparison video 4" data-carousel-dot="3"></button>
+          </div>
         </div>
       </div>
     </section>
@@ -561,18 +665,26 @@
     <section class="section">
       <div class="container">
         <h2>Applications</h2>
-        <div class="gallery">
-          <div>
-            <div class="placeholder small"><span>Human relocalization placeholder</span></div>
-            <p class="caption">Human Relocalization</p>
+        <div class="application-tabs" data-application-tabs>
+          <button class="application-tab active" type="button" data-application-tab="0">Human Relocalization</button>
+          <button class="application-tab" type="button" data-application-tab="1">Bullet Time Virtual Try-on</button>
+          <button class="application-tab" type="button" data-application-tab="2">360-degree Orbital Viewing</button>
+        </div>
+        <div class="application-viewer" data-application-viewer>
+          <div class="application-panel active">
+            <div class="application-video-frame">
+              <video class="application-video" src="assets/videos/applications/application-human-relocalization.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
           </div>
-          <div>
-            <div class="placeholder small"><span>360-degree viewing placeholder</span></div>
-            <p class="caption">360-degree Orbital Viewing</p>
+          <div class="application-panel">
+            <div class="application-video-frame">
+              <video class="application-video" src="assets/videos/applications/application-bullet-time.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
           </div>
-          <div>
-            <div class="placeholder small"><span>Bullet-time placeholder</span></div>
-            <p class="caption">Bullet Time Virtual Try-on</p>
+          <div class="application-panel">
+            <div class="application-video-frame">
+              <video class="application-video" src="assets/videos/applications/application-360-orbital-viewing.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+            </div>
           </div>
         </div>
       </div>
@@ -628,6 +740,34 @@
         dot.addEventListener('click', () => showSlide(dotIndex));
       });
       showSlide(0);
+    });
+
+    document.querySelectorAll('[data-application-viewer]').forEach((viewer) => {
+      const section = viewer.closest('.section');
+      const tabs = Array.from(section.querySelectorAll('[data-application-tab]'));
+      const panels = Array.from(viewer.querySelectorAll('.application-panel'));
+
+      const showApplication = (index) => {
+        panels.forEach((panel, panelIndex) => {
+          const isActive = panelIndex === index;
+          panel.classList.toggle('active', isActive);
+          const video = panel.querySelector('video');
+          if (!video) return;
+          if (isActive) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+        tabs.forEach((tab, tabIndex) => {
+          tab.classList.toggle('active', tabIndex === index);
+        });
+      };
+
+      tabs.forEach((tab, tabIndex) => {
+        tab.addEventListener('click', () => showApplication(tabIndex));
+      });
+      showApplication(0);
     });
   </script>
 </body>
