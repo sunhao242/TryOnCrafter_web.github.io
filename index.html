@@ -185,18 +185,19 @@
       min-height: 220px;
     }
 
-    .pipeline-embed {
+    .media-frame {
       width: 100%;
-      min-height: 520px;
       border: 1px solid var(--line);
       border-radius: 14px;
-      background: #fbfcff;
+      background: #fff;
+      overflow: hidden;
     }
 
-    .pipeline-fallback {
-      padding: 18px;
-      color: var(--muted);
-      text-align: center;
+    .figure-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #fff;
     }
 
     .caption {
@@ -329,8 +330,8 @@
   <main>
     <section class="section compact">
       <div class="container">
-        <div class="placeholder">
-          <span>Teaser video / image placeholder</span>
+        <div class="media-frame">
+          <img class="figure-image" src="assets/teaser.png" alt="TryOnCrafter teaser">
         </div>
         <p class="caption">Source video and garment input are transformed into realistic try-on videos under novel camera trajectories.</p>
       </div>
@@ -369,13 +370,8 @@
       <div class="container">
         <h2>Method Overview</h2>
         <div class="method-grid">
-          <div>
-            <object class="pipeline-embed" data="pipeline.pdf" type="application/pdf" aria-label="Overall pipeline figure">
-              <p class="pipeline-fallback">
-                Pipeline PDF preview is unavailable in this browser.
-                <a href="pipeline.pdf">Open pipeline.pdf</a>
-              </p>
-            </object>
+          <div class="media-frame">
+            <img class="figure-image" src="assets/pipeline.png" alt="Overall pipeline figure">
           </div>
           <div class="method-text">
             <article class="card">
