@@ -240,7 +240,11 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
-      align-items: stretch;
+      align-items: start;
+    }
+
+    .method-figure {
+      align-self: start;
     }
 
     .method-text {
@@ -370,7 +374,7 @@
       <div class="container">
         <h2>Method Overview</h2>
         <div class="method-grid">
-          <div class="media-frame">
+          <div class="media-frame method-figure">
             <img class="figure-image" src="assets/pipeline.png" alt="Overall pipeline figure">
           </div>
           <div class="method-text">
