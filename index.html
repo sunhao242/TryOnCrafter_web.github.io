@@ -185,6 +185,20 @@
       min-height: 220px;
     }
 
+    .pipeline-embed {
+      width: 100%;
+      min-height: 520px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fbfcff;
+    }
+
+    .pipeline-fallback {
+      padding: 18px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .caption {
       margin-top: 12px;
       color: #7a828f;
@@ -356,9 +370,12 @@
         <h2>Method Overview</h2>
         <div class="method-grid">
           <div>
-            <div class="placeholder">
-              <span>Overall pipeline figure placeholder</span>
-            </div>
+            <object class="pipeline-embed" data="pipeline.pdf" type="application/pdf" aria-label="Overall pipeline figure">
+              <p class="pipeline-fallback">
+                Pipeline PDF preview is unavailable in this browser.
+                <a href="pipeline.pdf">Open pipeline.pdf</a>
+              </p>
+            </object>
           </div>
           <div class="method-text">
             <article class="card">
