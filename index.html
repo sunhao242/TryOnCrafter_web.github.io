@@ -54,6 +54,10 @@
       width: min(1320px, calc(100% - 36px));
     }
 
+    .wide-container {
+      width: min(1180px, calc(100% - 36px));
+    }
+
     .hero {
       padding: 58px 0 28px;
       text-align: center;
@@ -226,6 +230,88 @@
       text-align: justify;
     }
 
+    .video-carousel {
+      position: relative;
+      margin-top: 26px;
+    }
+
+    .video-stage {
+      overflow: hidden;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 18px 46px rgba(35, 45, 65, 0.16);
+    }
+
+    .video-slide {
+      display: none;
+    }
+
+    .video-slide.active {
+      display: block;
+    }
+
+    .video-slide video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 2890 / 976;
+      background: #f5f6f8;
+      object-fit: cover;
+    }
+
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #303134;
+      box-shadow: 0 10px 26px rgba(35, 45, 65, 0.18);
+      cursor: pointer;
+      font-size: 30px;
+      line-height: 1;
+      transform: translateY(-50%);
+    }
+
+    .carousel-button:hover {
+      background: #fff;
+      color: #111315;
+    }
+
+    .carousel-button.prev {
+      left: -22px;
+    }
+
+    .carousel-button.next {
+      right: -22px;
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .carousel-dot {
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: #c9ced7;
+      cursor: pointer;
+    }
+
+    .carousel-dot.active {
+      width: 26px;
+      background: #303134;
+    }
+
     .highlights {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -305,6 +391,20 @@
         grid-template-columns: 1fr;
       }
 
+      .carousel-button {
+        width: 38px;
+        height: 38px;
+        font-size: 26px;
+      }
+
+      .carousel-button.prev {
+        left: 8px;
+      }
+
+      .carousel-button.next {
+        right: 8px;
+      }
+
       .hero {
         padding-top: 38px;
       }
@@ -356,6 +456,48 @@
         <p class="abstract">
           Video virtual try-on has made strong progress in synthesizing realistic garment overlays on dynamic subjects, yet existing methods remain constrained by the camera trajectory of the input monocular video. TryOnCrafter introduces Camera-controllable Video Virtual Try-on (CaM-VVT), a new setting that enables virtual fitting under arbitrary camera movements. The method builds a Renderable 4D Try-on Proxy by distilling 2D try-on priors into a clothed 3D Gaussian avatar, animating it with SMPL-X motion, and aligning it with a reconstructed background point cloud. A Proxy-Anchored Video DiT then uses the rendered proxy sequence, cross-view reference features, and multimodal semantic conditions to synthesize photorealistic try-on videos with consistent garment identity, plausible deformation, and coherent scene structure.
         </p>
+      </div>
+    </section>
+
+    <section class="section compact">
+      <div class="container wide-container">
+        <h2>Camera-controllable Virtual Try-On Results</h2>
+        <div class="video-carousel" data-carousel>
+          <button class="carousel-button prev" type="button" aria-label="Previous video" data-carousel-prev>&lsaquo;</button>
+          <div class="video-stage">
+          <div class="video-slide active">
+            <video src="展示视频/展示视频2/sample-0%20-%202026-05-10T220525.793.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="video-slide">
+            <video src="展示视频/展示视频2/sample-1%20(58).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="video-slide">
+            <video src="展示视频/展示视频2/sample-0%20-%202026-03-04T135442.321.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="video-slide">
+            <video src="展示视频/展示视频2/sample-10%20(9).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="video-slide">
+            <video src="展示视频/展示视频2/sample-1%20(42).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="video-slide">
+            <video src="展示视频/展示视频2/sample-9%20(8).mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          <div class="video-slide">
+            <video src="展示视频/展示视频2/%E8%A7%86%E9%A2%9115.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+          </div>
+          </div>
+          <button class="carousel-button next" type="button" aria-label="Next video" data-carousel-next>&rsaquo;</button>
+          <div class="carousel-dots" aria-label="Video selector">
+            <button class="carousel-dot active" type="button" aria-label="Show video 1" data-carousel-dot="0"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 2" data-carousel-dot="1"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 3" data-carousel-dot="2"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 4" data-carousel-dot="3"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 5" data-carousel-dot="4"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 6" data-carousel-dot="5"></button>
+            <button class="carousel-dot" type="button" aria-label="Show video 7" data-carousel-dot="6"></button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -454,5 +596,39 @@
       This project page follows the clean academic homepage style used by iTryOn. Images and videos are intentionally left blank for later replacement.
     </div>
   </footer>
+  <script>
+    document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+      const slides = Array.from(carousel.querySelectorAll('.video-slide'));
+      const dots = Array.from(carousel.querySelectorAll('[data-carousel-dot]'));
+      const prev = carousel.querySelector('[data-carousel-prev]');
+      const next = carousel.querySelector('[data-carousel-next]');
+      let activeIndex = 0;
+
+      const showSlide = (index) => {
+        activeIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+          const isActive = slideIndex === activeIndex;
+          slide.classList.toggle('active', isActive);
+          const video = slide.querySelector('video');
+          if (!video) return;
+          if (isActive) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+        dots.forEach((dot, dotIndex) => {
+          dot.classList.toggle('active', dotIndex === activeIndex);
+        });
+      };
+
+      prev.addEventListener('click', () => showSlide(activeIndex - 1));
+      next.addEventListener('click', () => showSlide(activeIndex + 1));
+      dots.forEach((dot, dotIndex) => {
+        dot.addEventListener('click', () => showSlide(dotIndex));
+      });
+      showSlide(0);
+    });
+  </script>
 </body>
 </html>
