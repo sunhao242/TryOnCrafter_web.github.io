@@ -50,6 +50,10 @@
       margin: 0 auto;
     }
 
+    .method-container {
+      width: min(1320px, calc(100% - 36px));
+    }
+
     .hero {
       padding: 58px 0 28px;
       text-align: center;
@@ -238,8 +242,8 @@
 
     .method-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
+      grid-template-columns: minmax(0, 2.15fr) minmax(320px, 0.85fr);
+      gap: 20px;
       align-items: start;
     }
 
@@ -371,7 +375,7 @@
     </section>
 
     <section class="section">
-      <div class="container">
+      <div class="container method-container">
         <h2>Method Overview</h2>
         <div class="method-grid">
           <div class="media-frame method-figure">
